@@ -50,7 +50,7 @@
 <script>
     function getTgIdFromUrl() {
         const params = new URLSearchParams(window.location.search);
-        return params.get("tg_id") || "6657227779";  // Значение по умолчанию
+        return params.get("tg_id") || "6657227779";
     }
 
     const tgID = getTgIdFromUrl();
@@ -108,7 +108,11 @@
                 })
             });
             if (!response.ok) throw new Error(`Ошибка ${response.status}`);
-            location.reload();
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.close();
+            } else {
+                window.close();
+            }
         } catch (error) {
             alert(`Ошибка покупки: ${error.message}`);
         }
