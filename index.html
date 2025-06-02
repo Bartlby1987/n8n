@@ -15,17 +15,26 @@
         .video-wrapper {
             position: relative;
             width: 100%;
-            height: 100vh;
+            height: 56.25vw;
         }
 
         .video-wrapper iframe {
             position: absolute;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             border: 0;
         }
+
+        .orientation-hint {
+            color: white;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
     </style>
+
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-900">
 <div class="max-w-md mx-auto p-4">
@@ -42,7 +51,7 @@
         </div>
     </div>
 </div>
-<div id="videoModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+<div id="videoModal" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 hidden">
     <div id="modalContent" class="bg-white rounded-lg w-11/12 md:w-3/4 lg:w-1/2 relative p-4">
         <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-600 hover:text-black text-3xl font-bold leading-none">&times;</button>
         <div class="video-wrapper">
@@ -52,6 +61,7 @@
             </iframe>
         </div>
     </div>
+    <p class="orientation-hint">Для удобства поверни телефон горизонтально</p>
 </div>
 <script>
     const tgID = Telegram.WebApp?.initDataUnsafe?.user?.id?.toString() || "6657227779";
@@ -85,7 +95,14 @@
     function closeModal() {
         modalIframe.src = "";
         videoModal.classList.add("hidden");
+        if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+        }
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
     }
+
     videoModal.addEventListener("click", (e) => {
         if (!modalContent.contains(e.target)) {
             closeModal();
