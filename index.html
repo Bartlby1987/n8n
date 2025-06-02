@@ -91,6 +91,7 @@
     function openModal(videoUrl) {
         modalIframe.src = videoUrl.replace('kinescope.io/', 'kinescope.io/embed/');
         videoModal.classList.remove("hidden");
+        handleOrientationChange(); // проверка при открытии
     }
     function closeModal() {
         modalIframe.src = "";
@@ -102,7 +103,20 @@
             document.exitFullscreen().catch(() => {});
         }
     }
-
+    window.addEventListener("orientationchange", handleOrientationChange);
+    function handleOrientationChange() {
+        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+        if (isLandscape && videoModal.classList.contains("flex")) {
+            const modalEl = document.getElementById("modalContent");
+            if (modalEl.requestFullscreen) {
+                modalEl.requestFullscreen().catch(() => {});
+            } else if (modalEl.webkitRequestFullscreen) {
+                modalEl.webkitRequestFullscreen();
+            }
+        } else if (!isLandscape && document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
+    }
     videoModal.addEventListener("click", (e) => {
         if (!modalContent.contains(e.target)) {
             closeModal();
@@ -128,8 +142,6 @@
             alert("Ошибка при отправке данных. Попробуй позже.");
         }
     }
-
-
     async function loadShopData() {
         const shopListEl = document.getElementById("shopList");
         const buyingListEl = document.getElementById("buyingList");
