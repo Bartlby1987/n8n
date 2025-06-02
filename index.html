@@ -17,11 +17,11 @@
             position: fixed;
             inset: 0;
             display: none;
-            align-items: center;     
-            justify-content: center; 
+            align-items: center;
+            justify-content: center;
             padding: 1rem;
             z-index: 50;
-            overflow: hidden;         
+            overflow: hidden;
         }
 
         #videoModal.active {
@@ -38,8 +38,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center; 
-            align-items: center;   
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
 
@@ -107,8 +107,21 @@
 </div>
 
 <script>
-    const tgID = Telegram.WebApp?.initDataUnsafe?.user?.id?.toString();
-
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+    let tgID = null;
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+        tgID = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+    } else {
+        const tgIdFromUrl = getQueryParam('tg_id');
+        if (tgIdFromUrl) {
+            tgID = tgIdFromUrl;
+        } else {
+            tgID = '';
+        }
+    }
     const shopBtn = document.getElementById("shopBtn");
     const ordersBtn = document.getElementById("ordersBtn");
     const shopTab = document.getElementById("shopTab");
@@ -164,7 +177,6 @@
             } else if (!isLandscape && document.fullscreenElement) {
                 document.exitFullscreen().catch(() => {});
             }
-            // Сбрасываем скроллы, чтобы видео не уходило вниз
             videoModal.scrollTop = 0;
             videoModal.scrollLeft = 0;
             modalContent.style.transform = 'none';
